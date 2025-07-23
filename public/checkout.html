@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout - MelHad Investment</title>
+    <link rel="stylesheet" href="checkout-styles.css">
+    <link rel="icon" href="assets/Logo.png" type="image/png">
+    
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://checkout.paypal.com;">
+</head>
+<body>
+    <div class="checkout-container">
+        <!-- Header -->
+        <header class="checkout-header">
+            <div class="header-content">
+                <img src="assets/Logo.png" alt="MelHad Investment" class="logo">
+                <h1>Secure Checkout</h1>
+                <div class="security-badges">
+                    <span class="security-badge">🔒 SSL Secured</span>
+                    <span class="security-badge">✅ PCI Compliant</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="checkout-content">
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <div id="order-items" class="order-items">
+                    <!-- Order items will be populated by JavaScript -->
+                </div>
+                <div class="order-totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">Le 0</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Delivery:</span>
+                        <span id="delivery-fee">Le 0</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Processing Fee:</span>
+                        <span id="processing-fee">Le 0</span>
+                    </div>
+                    <div class="total-row final-total">
+                        <span>Total:</span>
+                        <span id="final-total">Le 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="payment-form">
+                <h2>Payment Method</h2>
+                
+                <!-- Payment Method Selection -->
+                <div class="payment-methods">
+                    <div class="payment-method-tabs">
+                        <button type="button" class="payment-tab active" data-method="card">
+                            💳 Card Payment
+                        </button>
+                        <button type="button" class="payment-tab" data-method="mobile-money">
+                            📱 Mobile Money
+                        </button>
+                        <button type="button" class="payment-tab" data-method="paypal">
+                            🅿️ PayPal
+                        </button>
+                        <button type="button" class="payment-tab" data-method="bank-transfer">
+                            🏦 Bank Transfer
+                        </button>
+                    </div>
+
+                    <!-- Card Payment Form -->
+                    <div id="card-payment" class="payment-content active">
+                        <form id="payment-form">
+                            <div class="form-group">
+                                <label for="customer-name">Full Name</label>
+                                <input type="text" id="customer-name" name="customerName" required placeholder="Enter your full name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="customer-email">Email Address</label>
+                                <input type="email" id="customer-email" name="customerEmail" required placeholder="your@email.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="customer-phone">Phone Number</label>
+                                <input type="tel" id="customer-phone" name="customerPhone" required placeholder="+232 XX XXX XXXX">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="card-element">Card Information</label>
+                                <div id="card-element" class="card-element">
+                                    <!-- Stripe Elements will create form elements here -->
+                                </div>
+                                <div id="card-errors" class="error-message" role="alert"></div>
+                            </div>
+
+                            <button type="submit" id="submit-payment" class="payment-button">
+                                <span id="button-text">Pay Now</span>
+                                <div id="spinner" class="spinner hidden"></div>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Mobile Money Payment -->
+                    <div id="mobile-money-payment" class="payment-content">
+                        <div class="mobile-money-providers">
+                            <div class="provider-selection">
+                                <h3>Select Your Mobile Money Provider</h3>
+                                <div class="provider-options">
+                                    <label class="provider-option">
+                                        <input type="radio" name="mobileProvider" value="orange-money">
+                                        <div class="provider-card">
+                                            <span class="provider-logo">🟠</span>
+                                            <span class="provider-name">Orange Money</span>
+                                            <span class="provider-fee">2% fee</span>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="provider-option">
+                                        <input type="radio" name="mobileProvider" value="afrimoney">
+                                        <div class="provider-card">
+                                            <span class="provider-logo">🔵</span>
+                                            <span class="provider-name">Afrimoney</span>
+                                            <span class="provider-fee">2.5% fee</span>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="provider-option">
+                                        <input type="radio" name="mobileProvider" value="qmoney">
+                                        <div class="provider-card">
+                                            <span class="provider-logo">🟢</span>
+                                            <span class="provider-name">QMoney</span>
+                                            <span class="provider-fee">2% fee</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <form id="mobile-money-form" class="mobile-money-form">
+                                <div class="form-group">
+                                    <label for="mobile-name">Full Name</label>
+                                    <input type="text" id="mobile-name" name="customerName" required placeholder="Enter your full name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="mobile-phone">Mobile Money Phone Number</label>
+                                    <input type="tel" id="mobile-phone" name="phoneNumber" required placeholder="+232 XX XXX XXXX">
+                                </div>
+                                
+                                <button type="submit" class="payment-button">
+                                    Proceed with Mobile Money
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- PayPal Payment -->
+                    <div id="paypal-payment" class="payment-content">
+                        <div class="paypal-container">
+                            <div class="form-group">
+                                <label for="paypal-name">Full Name</label>
+                                <input type="text" id="paypal-name" name="customerName" required placeholder="Enter your full name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="paypal-email">Email Address</label>
+                                <input type="email" id="paypal-email" name="customerEmail" required placeholder="your@email.com">
+                            </div>
+                            
+                            <div id="paypal-button-container" class="paypal-button-container">
+                                <!-- PayPal Button will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank Transfer -->
+                    <div id="bank-transfer-payment" class="payment-content">
+                        <div class="bank-transfer-info">
+                            <h3>Bank Transfer Details</h3>
+                            <div class="bank-details">
+                                <div class="bank-detail">
+                                    <label>Bank Name:</label>
+                                    <span>Sierra Leone Commercial Bank</span>
+                                </div>
+                                <div class="bank-detail">
+                                    <label>Account Name:</label>
+                                    <span>MelHad Investment Ltd</span>
+                                </div>
+                                <div class="bank-detail">
+                                    <label>Account Number:</label>
+                                    <span>0123456789</span>
+                                </div>
+                                <div class="bank-detail">
+                                    <label>Reference:</label>
+                                    <span id="bank-reference">Order #</span>
+                                </div>
+                            </div>
+                            
+                            <form id="bank-transfer-form" class="bank-transfer-form">
+                                <div class="form-group">
+                                    <label for="bank-name">Full Name</label>
+                                    <input type="text" id="bank-name" name="customerName" required placeholder="Enter your full name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bank-email">Email Address</label>
+                                    <input type="email" id="bank-email" name="customerEmail" required placeholder="your@email.com">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bank-phone">Phone Number</label>
+                                    <input type="tel" id="bank-phone" name="customerPhone" required placeholder="+232 XX XXX XXXX">
+                                </div>
+                                
+                                <div class="bank-instructions">
+                                    <h4>Instructions:</h4>
+                                    <ol>
+                                        <li>Transfer the exact amount to the account above</li>
+                                        <li>Use the reference number provided</li>
+                                        <li>Submit this form after making the transfer</li>
+                                        <li>We'll verify and confirm your payment within 24 hours</li>
+                                    </ol>
+                                </div>
+                                
+                                <button type="submit" class="payment-button">
+                                    I Have Made the Transfer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Success Modal -->
+        <div id="success-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="success-icon">✅</div>
+                <h2>Payment Successful!</h2>
+                <p>Your payment has been processed successfully.</p>
+                <div class="payment-details">
+                    <div class="detail-row">
+                        <span>Order ID:</span>
+                        <span id="success-order-id"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Payment ID:</span>
+                        <span id="success-payment-id"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Amount:</span>
+                        <span id="success-amount"></span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button onclick="downloadReceipt()" class="button-secondary">Download Receipt</button>
+                    <button onclick="redirectToHome()" class="button-primary">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Money Instructions Modal -->
+        <div id="mobile-instructions-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="mobile-icon">📱</div>
+                <h2>Complete Your Payment</h2>
+                <p>Follow these steps to complete your mobile money payment:</p>
+                <ol id="mobile-instructions-list" class="instructions-list">
+                    <!-- Instructions will be populated by JavaScript -->
+                </ol>
+                <div class="modal-actions">
+                    <button onclick="checkPaymentStatus()" class="button-primary">I've Completed Payment</button>
+                    <button onclick="closeModal()" class="button-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>Processing your payment...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="checkout.js"></script>
+</body>
+</html>

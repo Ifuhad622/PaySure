@@ -1,0 +1,85 @@
+{
+  "name": "melhad-investment-app",
+  "version": "3.0.0",
+  "description": "Enterprise payment management system for MelHad Investment - Sierra Leone's premier business services",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "npm run optimize && npm run generate-sitemap",
+    "optimize": "npm run minify-css && npm run compress-images",
+    "minify-css": "cleancss -o public/customer-styles.min.css public/customer-styles.css",
+    "compress-images": "imagemin public/assets/*.{jpg,jpeg,png} --out-dir=public/assets/optimized",
+    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "test": "jest",
+    "lint": "eslint public/*.js",
+    "deploy": "npm run build && netlify deploy --prod",
+    "preview": "netlify deploy",
+    "postinstall": "npm run build",
+    "db:init": "node scripts/init-database.js",
+    "db:seed": "node scripts/seed-data.js",
+    "db:backup": "node scripts/backup-database.js",
+    "db:restore": "node scripts/restore-database.js",
+    "payments:test": "node scripts/test-payments.js"
+  },
+  "keywords": [
+    "printing services",
+    "sierra leone business",
+    "web development",
+    "digital marketing",
+    "enterprise solutions",
+    "mobile money integration",
+    "melhad investment",
+    "freetown printing",
+    "business services"
+  ],
+  "author": "MelHad Investment <melhad0121@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.8.7",
+    "multer": "^1.4.5",
+    "nodemailer": "^6.10.1",
+    "pdfkit": "^0.15.0",
+    "qrcode": "^1.5.4",
+    "rate-limiter-flexible": "^2.4.2",
+    "socket.io": "^4.8.1",
+    "stripe": "^13.11.0",
+    "twilio": "^4.23.0",
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "paypal-rest-sdk": "^1.8.1",
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
+    "express-rate-limit": "^7.1.5",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.2",
+    "eslint": "^8.57.0",
+    "imagemin": "^8.0.1",
+    "imagemin-mozjpeg": "^10.0.0",
+    "imagemin-pngquant": "^9.0.2",
+    "jest": "^29.7.0",
+    "netlify-cli": "^17.10.1",
+    "nodemon": "^3.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/melhadinvestment/business-app"
+  },
+  "homepage": "https://melhadinvestment.com",
+  "bugs": {
+    "url": "https://github.com/melhadinvestment/business-app/issues",
+    "email": "melhad0121@gmail.com"
+  }
+}
